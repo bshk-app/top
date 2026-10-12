@@ -88,6 +88,9 @@ If a release was published but distribution failed afterward, use
 existing release assets and repairs feeds and the stable cask without rebuilding,
 re-signing, re-notarizing, or modifying the published release. Repairs for an
 older stable version do not downgrade a newer Homebrew cask.
+Recovery keeps the tagged release's feed and signing configuration, and uses
+the cask renderer from the workflow's commit so cask metadata fixes can be
+applied to previously shipped assets.
 
 The release assets are:
 
@@ -160,8 +163,8 @@ Feed commits go to `updates`, which does not trigger release-please on `main`.
 Stable releases also publish `appcast-stable.xml` and update
 `bshk-app/homebrew-tap/Casks/top.rb`. The cask uses the notarized DMG, pins its
 SHA-256, requires Apple Silicon and macOS 14, declares `auto_updates true`, and
-uses the stable feed for livecheck. Beta releases leave the cask and stable feed
-unchanged. After the first stable release is published:
+uses the stable feed's short version for livecheck. Beta releases leave the cask
+and stable feed unchanged. Install the current stable release with:
 
 ```sh
 brew install --cask bshk-app/tap/top

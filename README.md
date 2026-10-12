@@ -20,8 +20,8 @@ bash scripts/package-macos.sh --preview
 
 ## Install a release
 
-Stable releases will be available from [GitHub Releases](https://github.com/bshk-app/top/releases)
-and the Homebrew tap after the first release is published:
+Stable releases are available from [GitHub Releases](https://github.com/bshk-app/top/releases)
+and the Homebrew tap:
 
 ```sh
 brew install --cask bshk-app/tap/top

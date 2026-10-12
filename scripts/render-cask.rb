@@ -17,12 +17,12 @@ template = <<~'CASK'
 
     livecheck do
       url "https://raw.githubusercontent.com/bshk-app/top/updates/appcast-stable.xml"
-      strategy :sparkle
+      strategy :sparkle, &:short_version
     end
 
     auto_updates true
     depends_on arch: :arm64
-    depends_on macos: ">= :sonoma"
+    depends_on macos: :sonoma
 
     app "Top.app"
 

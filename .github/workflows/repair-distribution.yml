@@ -39,6 +39,12 @@ jobs:
           gh release download "$RELEASE_TAG" --dir dist \
             --pattern 'Top-*-macos-arm64.*' --pattern manifest.json --pattern SHA256SUMS
 
+      - name: Apply the current cask renderer
+        shell: bash
+        run: |
+          git show "$GITHUB_SHA:scripts/render-cask.rb" > "$RUNNER_TEMP/render-cask.rb"
+          cp "$RUNNER_TEMP/render-cask.rb" scripts/render-cask.rb
+
       - name: Repair feeds and the stable cask
         shell: bash
         run: bash scripts/publish-updates.sh dist
