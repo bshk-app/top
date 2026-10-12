@@ -1,0 +1,8 @@
+{
+  "repository": "bshk-app/top",
+  "tap": "bshk-app/homebrew-tap",
+  "appcastBranch": "updates",
+  "sparkleVersion": "2.9.6",
+  "sparkleSHA256": "52bf9e88cdd972fc0c81501377a880e90d47031bd8ca5462488f843e2609e192",
+  "sparklePublicKey": "vCki0eiwlGncDf3ZwIZawLNFss906pi/drQi/PnUaUA="
+}

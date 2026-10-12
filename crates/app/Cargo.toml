@@ -1,0 +1,21 @@
+[package]
+name = "top"
+description = "Apple Silicon system monitor built with GPUI Kit."
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+
+[dependencies]
+gpui-kit = "0.7"
+top-metrics = { path = "../metrics" }
+
+[features]
+# Development aid: `TOP_SCREENSHOT=shot.png cargo run -p top --features screenshot`
+# renders each window to a PNG after a few samples, then quits.
+screenshot = ["gpui-kit/test-support"]
+# Development aid: `TOP_PERF=1 cargo run --release -p top --features perf`
+# drives scripted scenarios and prints GPUI's frame trace.
+perf = ["gpui-kit/profiler"]
+
+[dev-dependencies]
+gpui-kit = { version = "0.7", features = ["test-support"] }

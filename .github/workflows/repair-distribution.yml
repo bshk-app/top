@@ -1,0 +1,44 @@
+name: Repair Distribution
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Published release tag whose feed or cask needs recovery
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: top-distribution
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: macos-15
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RELEASE_TAG: ${{ inputs.tag }}
+      SPARKLE_PRIVATE_ED_KEY: ${{ secrets.SPARKLE_PRIVATE_ED_KEY || secrets.SPARKLE_ED_PRIVATE_KEY }}
+      TAP_GITHUB_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
+    steps:
+      - name: Check out the published release tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Download the existing release assets
+        shell: bash
+        run: |
+          gh release download "$RELEASE_TAG" --dir dist \
+            --pattern 'Top-*-macos-arm64.*' --pattern manifest.json --pattern SHA256SUMS
+
+      - name: Repair feeds and the stable cask
+        shell: bash
+        run: bash scripts/publish-updates.sh dist

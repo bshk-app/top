@@ -1,0 +1,244 @@
+# Local builds, tag pushes, and release-please share one packaging script.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag; leave empty for a branch preview
+        required: false
+        type: string
+      publish:
+        description: Sign, notarize, and publish the selected tag
+        default: false
+        type: boolean
+  workflow_call:
+    inputs:
+      tag:
+        description: Existing tag created by release-please
+        required: true
+        type: string
+      publish:
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: Build macOS release
+    runs-on: macos-15
+    timeout-minutes: 120
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      commit: ${{ steps.version.outputs.commit }}
+      mode: ${{ steps.version.outputs.mode }}
+    env:
+      CARGO_TERM_COLOR: always
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "2"
+      MACOSX_DEPLOYMENT_TARGET: "14.0"
+      RELEASE_TAG: ${{ inputs.tag || (github.ref_type == 'tag' && github.ref_name) || '' }}
+      PUBLISH_RELEASE: ${{ inputs.publish || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) }}
+    steps:
+      - name: Check out the exact release source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0 # CFBundleVersion counts commits, as in Murmator.
+          persist-credentials: false
+
+      - name: Install the pinned Rust toolchain
+        run: rustup show active-toolchain
+
+      - name: Validate the release version and tag
+        id: version
+        run: |
+          version=$(cargo metadata --no-deps --locked --format-version 1 | jq -er '.packages[] | select(.name == "top") | .version')
+          [[ "$(cat VERSION)" == "$version" ]] || { echo "::error::VERSION and Cargo.toml differ."; exit 1; }
+          mode=preview
+          if [[ "$PUBLISH_RELEASE" == true ]]; then
+            [[ -n "$RELEASE_TAG" ]] || { echo "::error::Publishing requires an existing tag."; exit 1; }
+            mode=release
+          fi
+          if [[ -n "$RELEASE_TAG" ]]; then
+            [[ "$RELEASE_TAG" == "v$version" ]] || { echo "::error::Tag must match v$version."; exit 1; }
+            [[ "$(git rev-parse "refs/tags/$RELEASE_TAG^{commit}")" == "$(git rev-parse HEAD)" ]] || exit 1
+          fi
+          {
+            echo "version=$version"
+            echo "commit=$(git rev-parse HEAD)"
+            echo "mode=$mode"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Cache Cargo dependencies and release builds
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target/release
+          key: macos-15-arm64-release-${{ hashFiles('Cargo.lock', 'rust-toolchain.toml') }}
+          restore-keys: |
+            macos-15-arm64-release-
+
+      - name: Verify update signing and stable tap access before notarization
+        if: steps.version.outputs.mode == 'release'
+        env:
+          SPARKLE_PRIVATE_ED_KEY: ${{ secrets.SPARKLE_PRIVATE_ED_KEY || secrets.SPARKLE_ED_PRIVATE_KEY }}
+          TAP_GITHUB_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
+        run: |
+          [[ -n "$SPARKLE_PRIVATE_ED_KEY" ]] || { echo "::error::Missing Sparkle private key."; exit 1; }
+          key=$(mktemp)
+          trap 'rm -f "$key"' EXIT
+          bash scripts/export-sparkle-key.sh "$key"
+          if [[ "${RELEASE_TAG%%+*}" != *-* ]]; then
+            [[ -n "$TAP_GITHUB_TOKEN" ]] || { echo "::error::Missing TAP_GITHUB_TOKEN."; exit 1; }
+            [[ "$(GH_TOKEN="$TAP_GITHUB_TOKEN" gh api repos/bshk-app/homebrew-tap --jq '.permissions.push')" == true ]] || exit 1
+          fi
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Run tests
+        run: cargo test --workspace --locked --release
+
+      - name: Install release tooling
+        if: steps.version.outputs.mode == 'release'
+        run: brew install bshk-app/tap/zamokctl
+
+      # Use the same secret names and ephemeral keychain as Murmator.
+      - name: Import Developer ID and materialize the notary key
+        if: steps.version.outputs.mode == 'release'
+        env:
+          DEVELOPER_ID_P12: ${{ secrets.DEVELOPER_ID_P12 }}
+          DEVELOPER_ID_P12_PASSWORD: ${{ secrets.DEVELOPER_ID_P12_PASSWORD }}
+          NOTARY_KEY_P8: ${{ secrets.NOTARY_KEY_P8 }}
+          NOTARY_KEY_ID: ${{ secrets.NOTARY_KEY_ID }}
+          NOTARY_ISSUER: ${{ secrets.NOTARY_ISSUER }}
+        run: |
+          for name in DEVELOPER_ID_P12 DEVELOPER_ID_P12_PASSWORD NOTARY_KEY_P8 NOTARY_KEY_ID NOTARY_ISSUER; do
+            [[ -n "${!name}" ]] || { echo "::error::Missing release secret: $name"; exit 1; }
+          done
+          umask 077
+          keychain="$RUNNER_TEMP/release.keychain-db"
+          password=$(uuidgen)
+          echo "::add-mask::$password"
+          security create-keychain -p "$password" "$keychain"
+          security set-keychain-settings -lut 7200 "$keychain"
+          security unlock-keychain -p "$password" "$keychain"
+          printf '%s' "$DEVELOPER_ID_P12" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security import "$RUNNER_TEMP/cert.p12" -k "$keychain" \
+            -P "$DEVELOPER_ID_P12_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security
+          for certificate in DeveloperIDCA DeveloperIDG2CA; do
+            curl --fail --silent --show-error --retry 3 \
+              -o "$RUNNER_TEMP/$certificate.cer" "https://www.apple.com/certificateauthority/$certificate.cer"
+            security import "$RUNNER_TEMP/$certificate.cer" -k "$keychain" -T /usr/bin/codesign
+          done
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$password" "$keychain" >/dev/null
+          existing=()
+          while IFS= read -r entry; do
+            entry=${entry#*\"}
+            existing+=("${entry%%\"*}")
+          done < <(security list-keychains -d user)
+          security list-keychains -d user -s "$keychain" "${existing[@]}"
+          printf '%s' "$NOTARY_KEY_P8" | base64 --decode > "$RUNNER_TEMP/notary.p8"
+          echo "NOTARY_KEY_PATH=$RUNNER_TEMP/notary.p8" >> "$GITHUB_ENV"
+          rm -f "$RUNNER_TEMP/cert.p12"
+
+      - name: Build and package Top
+        env:
+          PACKAGE_MODE: ${{ steps.version.outputs.mode }}
+          RELEASE_SIGNING_IDENTITY_SHA1: ${{ secrets.RELEASE_SIGNING_IDENTITY_SHA1 }}
+          NOTARY_KEY_ID: ${{ secrets.NOTARY_KEY_ID }}
+          NOTARY_ISSUER: ${{ secrets.NOTARY_ISSUER }}
+        run: bash scripts/package-macos.sh "--$PACKAGE_MODE"
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: Top-macos-arm64
+          path: target/dist/${{ steps.version.outputs.version }}/${{ steps.version.outputs.mode }}/
+          if-no-files-found: error
+          retention-days: 14
+          overwrite: true
+
+      - name: Remove ephemeral credentials
+        if: always()
+        run: |
+          rm -f "$RUNNER_TEMP/cert.p12" "$RUNNER_TEMP/notary.p8"
+          if [[ -f "$RUNNER_TEMP/release.keychain-db" ]]; then
+            security delete-keychain "$RUNNER_TEMP/release.keychain-db"
+          fi
+
+  publish:
+    name: Publish the completed draft
+    if: needs.build.outputs.mode == 'release'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Check out publishing scripts from the built commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.build.outputs.commit }}
+          persist-credentials: false
+
+      - name: Download release artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: Top-macos-arm64
+          path: dist
+
+      - name: Publish signed artifacts before making the release public
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+          RELEASE_COMMIT: ${{ needs.build.outputs.commit }}
+        run: bash scripts/publish-release.sh dist
+
+  distribute:
+    name: Publish Sparkle channels and Homebrew cask
+    if: needs.build.outputs.mode == 'release'
+    needs: [build, publish]
+    runs-on: macos-15
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    concurrency:
+      group: top-distribution
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+      SPARKLE_PRIVATE_ED_KEY: ${{ secrets.SPARKLE_PRIVATE_ED_KEY || secrets.SPARKLE_ED_PRIVATE_KEY }}
+      TAP_GITHUB_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
+    steps:
+      - name: Check out distribution scripts from the built commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.build.outputs.commit }}
+          persist-credentials: false
+
+      - name: Download the published artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: Top-macos-arm64
+          path: dist
+
+      - name: Sign and publish feeds and the stable cask
+        run: bash scripts/publish-updates.sh dist
