@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Top updates</title>
+        <link>https://github.com/bshk-app/top</link>
+        <language>en</language>
+        <item>
+            <title>Top 0.1.0</title>
+            <sparkle:version>1</sparkle:version>
+            <sparkle:shortVersionString>0.1.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description sparkle:format="markdown">
+### Added
+
+- Native Apple Silicon system monitor with a dashboard, menu bar popover, and floating widget.
+- CPU, GPU, memory, disk, network, and process metrics.
+- Signed and notarized macOS releases through GitHub Actions.
+- Sparkle updates with stable and beta channels, and a Homebrew cask.
+</description>
+            <pubDate>Mon, 12 Oct 2026 15:23:14 +0000</pubDate>
+            <enclosure xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" sparkle:edSignature="ukNm9WTq4M05r534HDgyl6PNmbAiNMMXNudXfnFNljRjCIIdH/Gr04EgY30FtwG2iXa+P/SEH0eaBdFpPW6vCQ==" length="12862048" url="https://github.com/bshk-app/top/releases/download/v0.1.0/Top-0.1.0-macos-arm64.zip" type="application/octet-stream"></enclosure>
+        </item>
+    </channel>
+</rss><!-- sparkle-signatures:
+edSignature: fikDL3C63pUIDl4izg+W2zKTwBkqVd4Y1rr/fbNmBGTMylTG5jk0k64eB0LOW/MdBoR9PA/8BGFL1IV9KBUGAg==
+length: 1409
+-->
