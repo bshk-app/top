@@ -1,7 +1,7 @@
 use gpui_kit::component::button::{Button, ButtonVariants as _};
 use gpui_kit::component::checkbox::Checkbox;
 use gpui_kit::component::progress::Progress;
-use gpui_kit::component::{ActiveTheme as _, Disableable as _, Sizable as _, h_flex, v_flex};
+use gpui_kit::component::{ActiveTheme as _, Sizable as _, h_flex, v_flex};
 use gpui_kit::{
     AnyWindowHandle, App, AppContext as _, Bounds, Context, Entity, FontWeight, Global,
     InteractiveElement as _, IntoElement, ParentElement as _, Render, SharedString, Styled as _,
@@ -37,6 +37,26 @@ struct GlobalMenuBar {
 
 impl Global for GlobalMenuBar {}
 
+/// Opens the indicator controls even when every status item is hidden.
+pub fn show(cx: &mut App) {
+    let menu_bar = cx.global::<GlobalMenuBar>()._menu_bar.clone();
+    menu_bar.update(cx, |menu_bar, cx| {
+        if let Some(handle) = menu_bar.popover
+            && handle
+                .update(cx, |_, window, _| window.activate_window())
+                .is_ok()
+        {
+            cx.activate(true);
+            return;
+        }
+        let anchor = menu_bar
+            .items
+            .last()
+            .map_or(MenuBarItem::Network, |(item, _)| *item);
+        menu_bar.open_popover(anchor, cx);
+    });
+}
+
 pub fn init(monitor: Entity<Monitor>, cx: &mut App) -> Entity<MenuBar> {
     let menu_bar = cx.new(|cx| {
         let weak = cx.weak_entity();
@@ -60,17 +80,9 @@ pub fn init(monitor: Entity<Monitor>, cx: &mut App) -> Entity<MenuBar> {
                 })
                 .detach();
         });
-        // The menu bar adds each item left of the existing ones.
-        let mut items: Vec<_> = MenuBarItem::ALL
-            .into_iter()
-            .enumerate()
-            .rev()
-            .filter_map(|(ix, item)| Some((item, StatusItem::new(ix as isize)?)))
-            .collect();
-        items.reverse();
         let shown = cx.new(|_| ShownItems::load());
-        let menu_bar = MenuBar {
-            items,
+        let mut menu_bar = MenuBar {
+            items: Vec::new(),
             _subscriptions: vec![
                 cx.observe(&monitor, |menu_bar, _, cx| menu_bar.refresh(cx)),
                 cx.observe(&shown, |menu_bar, _, cx| menu_bar.show_items(cx)),
@@ -89,10 +101,22 @@ pub fn init(monitor: Entity<Monitor>, cx: &mut App) -> Entity<MenuBar> {
 }
 
 impl MenuBar {
-    fn show_items(&self, cx: &App) {
+    fn show_items(&mut self, cx: &App) {
         let shown = self.shown.read(cx);
-        for (item, status_item) in &self.items {
-            status_item.set_visible(shown.contains(*item));
+        // Dropping a disabled item removes it from NSStatusBar entirely.
+        self.items.retain(|(item, _)| shown.contains(*item));
+        if self.items.len() != shown.len() {
+            // New items appear left of the existing ones, so rebuild additions
+            // right to left to keep the original module order.
+            self.items.clear();
+            self.items = MenuBarItem::ALL
+                .into_iter()
+                .enumerate()
+                .rev()
+                .filter(|(_, item)| shown.contains(*item))
+                .filter_map(|(ix, item)| Some((item, StatusItem::new(ix as isize)?)))
+                .collect();
+            self.items.reverse();
         }
         self.refresh(cx);
     }
@@ -134,11 +158,17 @@ impl MenuBar {
             .items
             .iter()
             .find(|(item, _)| *item == anchor)
-            .map(|(_, status_item)| status_item.frame())
-            .unwrap_or_default();
+            .map(|(_, status_item)| status_item.frame());
         // Cocoa measures y up from the primary display's bottom; GPUI measures down from its top.
-        let menu_bar_bottom = display.size.height - px(frame.origin.y as f32);
-        let anchor_x = px((frame.origin.x + frame.size.width / 2.) as f32) - px(width / 2.);
+        let (anchor_x, menu_bar_bottom) = frame.map_or(
+            (display.right() - px(width + POPOVER_GAP), px(24.)),
+            |frame| {
+                (
+                    px((frame.origin.x + frame.size.width / 2.) as f32) - px(width / 2.),
+                    display.size.height - px(frame.origin.y as f32),
+                )
+            },
+        );
         let x = anchor_x.clamp(
             display.left() + px(POPOVER_GAP),
             display.right() - px(width + POPOVER_GAP),
@@ -359,14 +389,12 @@ impl MenuBarPopover {
     fn render_menu_bar_items(&self, cx: &App) -> impl IntoElement {
         let theme = cx.theme();
         let shown_items = self.shown.read(cx);
-        let last = shown_items.len() == 1;
         let checkboxes = MenuBarItem::ALL.map(|item| {
             let checked = shown_items.contains(item);
             let shown = self.shown.clone();
             Checkbox::new(item.key())
                 .label(item.label())
                 .checked(checked)
-                .disabled(checked && last)
                 .on_click(move |&checked, _, cx| {
                     shown.update(cx, |shown, cx| {
                         if shown.set(item, checked) {
@@ -492,9 +520,63 @@ mod tests {
     use gpui_kit::{AppContext as _, Bounds, TestAppContext, WindowBounds, WindowOptions, size};
     use top_metrics::{ChipInfo, Snapshot};
 
-    use super::{MenuBarPopover, POPOVER_SIZE};
+    use super::{GlobalMenuBar, MenuBar, MenuBarPopover, POPOVER_SIZE, show};
     use crate::menu_bar::{MenuBarItem, ShownItems};
     use crate::monitor::Monitor;
+
+    #[gpui_kit::test]
+    fn controls_reopen_when_every_indicator_is_hidden(cx: &mut TestAppContext) {
+        let (menu_bar, shown) = cx.update(|cx| {
+            gpui_kit::init(cx);
+            crate::theme::init(cx);
+            let monitor =
+                cx.new(|cx| Monitor::fixture(ChipInfo::default(), Snapshot::default(), cx));
+            let shown = cx.new(|_| {
+                let mut shown = ShownItems::in_memory();
+                for item in MenuBarItem::ALL {
+                    shown.set(item, false);
+                }
+                shown
+            });
+            let menu_bar = cx.new(|_| MenuBar {
+                items: Vec::new(),
+                shown: shown.clone(),
+                monitor,
+                popover: None,
+                _subscriptions: Vec::new(),
+            });
+            cx.set_global(GlobalMenuBar {
+                _menu_bar: menu_bar.clone(),
+            });
+            show(cx);
+            (menu_bar, shown)
+        });
+        let handle = cx
+            .read(|cx| menu_bar.read(cx).popover)
+            .expect("controls open without an anchor");
+        cx.update(show);
+        assert_eq!(
+            cx.update(|cx| cx.windows().len()),
+            1,
+            "reuse the open controls"
+        );
+        cx.update_window(handle, |_, window, _| window.remove_window())
+            .unwrap();
+        cx.update(show);
+        let handle = cx
+            .read(|cx| menu_bar.read(cx).popover)
+            .expect("closed controls reopen");
+        cx.update_window(handle, |_, window, cx| {
+            assert!(
+                window.bounds().origin.y < gpui_kit::px(100.),
+                "controls stay on screen without an anchor"
+            );
+            window.render_frame(cx);
+            window.click("network", cx);
+        })
+        .unwrap();
+        assert!(cx.read(|cx| shown.read(cx).contains(MenuBarItem::Network)));
+    }
 
     #[gpui_kit::test]
     fn checkboxes_choose_the_menu_bar_items(cx: &mut TestAppContext) {
@@ -536,5 +618,33 @@ mod tests {
         .unwrap();
         assert!(is_shown(MenuBarItem::Gpu, cx), "checking GPU shows it");
         assert!(!is_shown(MenuBarItem::Cpu, cx), "unchecking CPU hides it");
+
+        cx.update_window(handle, |_, window, cx| {
+            for item in MenuBarItem::ALL {
+                if item != MenuBarItem::Network && shown.read(cx).contains(item) {
+                    window.render_frame(cx);
+                    window.click(item.key(), cx);
+                }
+            }
+            assert_eq!(shown.read(cx).len(), 1);
+            window.render_frame(cx);
+            window.click("network", cx);
+        })
+        .unwrap();
+        assert!(
+            !is_shown(MenuBarItem::Network, cx),
+            "the last checkbox can be unchecked"
+        );
+        assert_eq!(cx.read(|cx| shown.read(cx).len()), 0);
+
+        cx.update_window(handle, |_, window, cx| {
+            window.render_frame(cx);
+            window.click("network", cx);
+        })
+        .unwrap();
+        assert!(
+            is_shown(MenuBarItem::Network, cx),
+            "Network can be restored"
+        );
     }
 }

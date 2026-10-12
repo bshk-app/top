@@ -457,12 +457,6 @@ impl StatusItem {
         });
     }
 
-    pub fn set_visible(&self, visible: bool) {
-        unsafe {
-            let _: () = msg_send!(self.item, c"setVisible:", visible => bool; -> ());
-        }
-    }
-
     /// The item's frame on screen, in Cocoa coordinates.
     pub fn frame(&self) -> CGRect {
         unsafe {

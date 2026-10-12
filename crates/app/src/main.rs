@@ -31,6 +31,7 @@ actions!(
         FocusProcesses,
         QuitProcess,
         ShowDashboard,
+        ShowMenuBar,
         ToggleWidget,
         ClosePopover,
         CheckForUpdates,
@@ -70,6 +71,9 @@ fn main() {
             cx.on_action(|_: &Quit, cx: &mut App| cx.quit());
             cx.on_action(|_: &ShowDashboard, cx: &mut App| {
                 windows::show_dashboard(cx);
+            });
+            cx.on_action(|_: &ShowMenuBar, cx: &mut App| {
+                cx.defer(popover::show);
             });
             cx.on_action(|_: &ToggleWidget, cx: &mut App| {
                 windows::toggle_widget(cx);
@@ -135,6 +139,7 @@ fn set_menus(updates_available: bool, cx: &mut App) {
         Menu::new("Top").items(app_items),
         Menu::new("Window").items([
             MenuItem::action("Dashboard", ShowDashboard),
+            MenuItem::action("Menu Bar…", ShowMenuBar),
             MenuItem::action("Floating Widget", ToggleWidget),
         ]),
     ]);

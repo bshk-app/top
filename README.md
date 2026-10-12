@@ -3,6 +3,10 @@
 A native Apple Silicon system monitor for macOS 14 or later, built with GPUI Kit.
 Top provides a dashboard, menu bar metrics, a floating widget, and a process list.
 
+All menu bar indicators, including Network, can be disabled in the popover.
+The selection is saved between launches. To restore hidden indicators,
+activate Top from the Dock and choose **Window → Menu Bar…**.
+
 ## Build from source
 
 Install Xcode with its Metal compiler and Rust, then run:

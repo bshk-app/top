@@ -188,8 +188,8 @@ fn startup_disk_used(snapshot: &Snapshot) -> f32 {
         })
 }
 
-/// The items in the menu bar, kept between launches. At least one stays,
-/// so the popover can always be opened.
+/// The items in the menu bar, kept between launches. An empty selection
+/// hides every item.
 pub struct ShownItems {
     items: Vec<MenuBarItem>,
     path: Option<PathBuf>,
@@ -221,10 +221,9 @@ impl ShownItems {
         self.items.len()
     }
 
-    /// Shows or hides `item`; returns whether anything changed. Hiding the
-    /// last item is refused.
+    /// Shows or hides `item`; returns whether anything changed.
     pub fn set(&mut self, item: MenuBarItem, shown: bool) -> bool {
-        if shown == self.contains(item) || (!shown && self.items.len() == 1) {
+        if shown == self.contains(item) {
             return false;
         }
         self.items = MenuBarItem::ALL
@@ -249,8 +248,8 @@ fn serialize(items: &[MenuBarItem]) -> String {
     format!("items={}\n", keys.join(","))
 }
 
-/// Parses `items=cpu,memory,…`; unknown keys are dropped, and nothing valid
-/// means the defaults.
+/// Parses `items=cpu,memory,…`; unknown keys are dropped. An explicit
+/// `items=` hides everything; missing or invalid selections use the defaults.
 fn parse(text: &str) -> Vec<MenuBarItem> {
     let keys: Vec<MenuBarItem> = text
         .lines()
@@ -262,7 +261,8 @@ fn parse(text: &str) -> Vec<MenuBarItem> {
         .into_iter()
         .filter(|item| keys.contains(item))
         .collect();
-    if items.is_empty() {
+    let explicitly_empty = text.lines().any(|line| line.trim_end() == "items=");
+    if items.is_empty() && !explicitly_empty {
         MenuBarItem::DEFAULT.to_vec()
     } else {
         items
@@ -282,17 +282,45 @@ mod tests {
         assert_eq!(parse(""), MenuBarItem::DEFAULT);
         assert_eq!(parse("items=bogus,cpu,cpu\n"), vec![MenuBarItem::Cpu]);
     }
+    #[test]
+    fn round_trips_an_explicitly_empty_selection() {
+        assert_eq!(parse(&serialize(&[])), Vec::<MenuBarItem>::new());
+        assert!(parse("items=   \n").is_empty());
+        assert_eq!(parse("unrelated=value\n"), MenuBarItem::DEFAULT);
+        assert_eq!(parse("items=bogus\n"), MenuBarItem::DEFAULT);
+    }
 
     #[test]
-    fn never_hides_every_item() {
+    fn can_hide_network_when_it_is_the_last_item() {
+        let mut shown = ShownItems::in_memory();
+        for item in MenuBarItem::DEFAULT {
+            if item != MenuBarItem::Network {
+                assert!(shown.set(item, false));
+            }
+        }
+        assert_eq!(shown.len(), 1);
+        assert!(shown.contains(MenuBarItem::Network));
+
+        assert!(shown.set(MenuBarItem::Network, false));
+        assert!(!shown.contains(MenuBarItem::Network));
+        assert_eq!(shown.len(), 0);
+    }
+
+    #[test]
+    fn can_hide_and_restore_every_item() {
         let mut shown = ShownItems::in_memory();
         assert!(shown.set(MenuBarItem::Gpu, true));
         assert!(!shown.set(MenuBarItem::Gpu, true), "already shown");
         for item in MenuBarItem::ALL {
-            shown.set(item, false);
+            assert!(shown.set(item, false));
         }
-        assert_eq!(shown.len(), 1, "the last item stays");
-        assert!(shown.contains(MenuBarItem::Network));
+        assert_eq!(shown.len(), 0);
+        assert!(!shown.set(MenuBarItem::Network, false), "already hidden");
+
+        for item in MenuBarItem::ALL.into_iter().rev() {
+            assert!(shown.set(item, true));
+        }
+        assert_eq!(shown.items, MenuBarItem::ALL, "restored in menu bar order");
     }
 
     fn texts(columns: &[Column]) -> Vec<Vec<&str>> {
