@@ -1,0 +1,17 @@
+{
+  "tag": "v0.1.0",
+  "url": "https://github.com/bshk-app/top/releases/tag/v0.1.0",
+  "commit": "89e1cead11bca860d9269a8309f8298feddaef45",
+  "installedVersion": "0.1.0",
+  "bundleId": "app.bshk.top",
+  "architecture": "arm64",
+  "developerId": "Developer ID Application: Aleksandr Beshkenadze (Q8H6GWJ658)",
+  "teamIdentifier": "Q8H6GWJ658",
+  "codesignDeepStrictValid": true,
+  "gatekeeper": "accepted \u2014 Notarized Developer ID",
+  "staplerValid": true,
+  "zipSha256": "88202ea03f87ef5c5552b6518c4aea09e1ded29ff10f9acde00d48b214b20edd",
+  "dmgSha256": "e678b8aaf6afc8cd2712bbadcc265897ed672252761c3b89aa6647a26448e527",
+  "releaseSha256SumsMatched": true,
+  "appIconMatchesReleaseCommit": true
+}

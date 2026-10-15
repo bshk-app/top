@@ -1,0 +1,9 @@
+{
+  "name": "top-native-tutorial",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "HYPERFRAMES_SKIP_SKILLS=1 HYPERFRAMES_NO_TELEMETRY=1 npx --yes hyperframes@0.8.149 check",
+    "render": "HYPERFRAMES_SKIP_SKILLS=1 HYPERFRAMES_NO_TELEMETRY=1 npx --yes hyperframes@0.8.149 render --fps 30 --quality delivery --video-frame-format png --output renders/tutorial.mp4"
+  }
+}

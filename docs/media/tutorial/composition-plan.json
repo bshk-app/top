@@ -1,0 +1,61 @@
+{
+  "durationSeconds": 36,
+  "fps": 30,
+  "scenes": [
+    {
+      "id": "menu",
+      "title": "Read the menu bar",
+      "outputStart": 0,
+      "outputEnd": 7,
+      "mode": "PNG reading hold",
+      "source": "assets/menu-bar.png",
+      "sourceStart": null,
+      "sourceEnd": null,
+      "playbackRate": null
+    },
+    {
+      "id": "metrics",
+      "title": "Open the dashboard",
+      "outputStart": 7,
+      "outputEnd": 15,
+      "mode": "PNG reading hold",
+      "source": "assets/dashboard-metrics.png",
+      "sourceStart": null,
+      "sourceEnd": null,
+      "playbackRate": null
+    },
+    {
+      "id": "search",
+      "title": "Search a real process",
+      "outputStart": 15,
+      "outputEnd": 20,
+      "mode": "PNG reading hold",
+      "source": "assets/process-search.png",
+      "sourceStart": null,
+      "sourceEnd": null,
+      "playbackRate": null
+    },
+    {
+      "id": "result",
+      "title": "Inspect the result",
+      "outputStart": 20,
+      "outputEnd": 28,
+      "mode": "Native footage \u00b7 1\u00d7",
+      "source": "assets/process-detail.mp4",
+      "sourceStart": 0,
+      "sourceEnd": 8,
+      "playbackRate": 1
+    },
+    {
+      "id": "widget",
+      "title": "Keep the widget nearby",
+      "outputStart": 28,
+      "outputEnd": 36,
+      "mode": "PNG reading hold",
+      "source": "assets/widget.png",
+      "sourceStart": null,
+      "sourceEnd": null,
+      "playbackRate": null
+    }
+  ]
+}

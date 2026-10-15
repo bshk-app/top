@@ -1,0 +1,162 @@
+{
+  "appVersion": "0.1.0",
+  "releaseCommit": "89e1cead11bca860d9269a8309f8298feddaef45",
+  "captureDate": "2026-10-12",
+  "captureTimezone": "Europe/Helsinki",
+  "inputs": [
+    {
+      "path": "assets/app-icon.png",
+      "sizeBytes": 943457,
+      "sha256": "578d32108ada8b9c585aa4ee79bbd6cfec87a41a3cd5165bfed02e2a08ca46bb"
+    },
+    {
+      "path": "assets/dashboard-metrics.png",
+      "sizeBytes": 333055,
+      "sha256": "52a02a73300119674f93f87e93c40d5a9b4edbe9831dc293c127154f10377292",
+      "origin": {
+        "type": "Cap native window PNG",
+        "sourceDimensions": [
+          2482,
+          1800
+        ],
+        "cropPixels": {
+          "x": 0,
+          "y": 0,
+          "width": 2482,
+          "height": 1090
+        },
+        "originalSha256": "f6e7573c64052c521575afa02fd9ae4dedaaef83d9fe23a6aa651f1a4f25ee8a",
+        "originalPngWrittenAt": "2026-10-12T23:29:13.819556+03:00",
+        "timezone": "Europe/Helsinki"
+      }
+    },
+    {
+      "path": "assets/fonts/OFL.txt",
+      "sizeBytes": 4380,
+      "sha256": "262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a"
+    },
+    {
+      "path": "assets/fonts/inter-variable.woff2",
+      "sizeBytes": 27708,
+      "sha256": "779821c86789ed36b544d9b82ad74cfdfe0bfd50363b81be9b3e692ede83f16b"
+    },
+    {
+      "path": "assets/gsap.min.js",
+      "sizeBytes": 72777,
+      "sha256": "19e3ad578c9c583ddf9bdca2ad87bb55c3d70b331058e28abacab898f799b2ee"
+    },
+    {
+      "path": "assets/menu-bar.png",
+      "sizeBytes": 49183,
+      "sha256": "c1364b46a2de45b5a099b88798297bb925cf88a70daf854d03cb87ffc47485a5",
+      "origin": {
+        "type": "Cap screen PNG (private original)",
+        "sourceDimensions": [
+          3840,
+          2160
+        ],
+        "cropPixels": {
+          "x": 1570,
+          "y": 0,
+          "width": 750,
+          "height": 58
+        },
+        "originalSha256": "b294ecd08bc33bb99d6c435cbda23ae79d1096720a977668acae6782a2c86e4a",
+        "originalPngWrittenAt": "2026-10-12T23:29:14.114100+03:00",
+        "timezone": "Europe/Helsinki"
+      }
+    },
+    {
+      "path": "assets/process-detail.mp4",
+      "sizeBytes": 319137,
+      "sha256": "a61b37dd8ae6a43b08a49a71e9bda982aaa84bbd95378ed1d4c0afbc1461de4f",
+      "origin": {
+        "type": "Cap app-only export of native Top recording",
+        "originalDisplaySha256": "50f634691edbf5d9ecf6e120d4364ee3860c01beeeb22ca42153458df0041ffc",
+        "originalDimensions": [
+          2482,
+          1800
+        ],
+        "originalDurationSeconds": 100.810756,
+        "sourceRangeSeconds": [
+          49,
+          57
+        ],
+        "cropPixels": {
+          "x": 32,
+          "y": 1204,
+          "width": 2418,
+          "height": 210
+        },
+        "exportDimensions": [
+          2420,
+          210
+        ],
+        "exportDurationSeconds": 8,
+        "exportFps": 30,
+        "playbackRate": 1,
+        "capVersion": "0.1.0",
+        "cursorHide": true,
+        "decoder": "FFmpeg",
+        "cfrIntermediateUsed": false
+      },
+      "video": {
+        "streams": [
+          {
+            "type": "video",
+            "codec": "h264"
+          }
+        ],
+        "width": 2420,
+        "height": 210,
+        "pix_fmt": "yuv420p",
+        "avg_frame_rate": "30/1",
+        "duration": "8.000000",
+        "nb_frames": "240",
+        "formatDuration": "8.000000"
+      }
+    },
+    {
+      "path": "assets/process-search.png",
+      "sizeBytes": 52238,
+      "sha256": "9deedde5303bb0362008cf49a6d11b4f66fc901c62c721af30c96ef247d9272e",
+      "origin": {
+        "type": "Cap native window PNG",
+        "sourceDimensions": [
+          2482,
+          1800
+        ],
+        "cropPixels": {
+          "x": 32,
+          "y": 1112,
+          "width": 2418,
+          "height": 300
+        },
+        "originalSha256": "9f209073a5297070f60c3c476d45eb9a82f2f062b81fed3a9b0e95f755d62995",
+        "originalPngWrittenAt": "2026-10-12T23:30:55.070446+03:00",
+        "timezone": "Europe/Helsinki"
+      }
+    },
+    {
+      "path": "assets/widget.png",
+      "sizeBytes": 27556,
+      "sha256": "fe7b8e3f9ad82ff4c847a7f3b8f8a756c77ed97509f3bd23acca0475afca5c79",
+      "origin": {
+        "type": "Cap screen PNG (private original)",
+        "sourceDimensions": [
+          3840,
+          2160
+        ],
+        "cropPixels": {
+          "x": 3192,
+          "y": 120,
+          "width": 576,
+          "height": 444
+        },
+        "originalSha256": "b294ecd08bc33bb99d6c435cbda23ae79d1096720a977668acae6782a2c86e4a",
+        "originalPngWrittenAt": "2026-10-12T23:29:14.114100+03:00",
+        "timezone": "Europe/Helsinki"
+      }
+    }
+  ]
+}

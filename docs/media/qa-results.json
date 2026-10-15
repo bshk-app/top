@@ -1,0 +1,120 @@
+{
+  "hyperframesVersion": "0.8.149",
+  "checks": {
+    "main": {
+      "passed": true,
+      "errors": 0,
+      "warnings": 0,
+      "layoutSamples": 9,
+      "transitionSamples": 0,
+      "contrastPassed": 34,
+      "contrastChecked": 34
+    },
+    "teaser": {
+      "passed": true,
+      "errors": 0,
+      "warnings": 0,
+      "layoutSamples": 9,
+      "transitionSamples": 0,
+      "contrastPassed": 18,
+      "contrastChecked": 18
+    },
+    "overview": {
+      "passed": true,
+      "errors": 0,
+      "warnings": 0,
+      "layoutSamples": 9,
+      "transitionSamples": 0,
+      "contrastPassed": 20,
+      "contrastChecked": 20
+    },
+    "menu-widget": {
+      "passed": true,
+      "errors": 0,
+      "warnings": 0,
+      "layoutSamples": 9,
+      "transitionSamples": 0,
+      "contrastPassed": 25,
+      "contrastChecked": 25
+    }
+  },
+  "cap": {
+    "originalProjectValid": true,
+    "workingCropProjectValid": true,
+    "recordingMetaExists": true,
+    "sourceRangeSeconds": [
+      49,
+      57
+    ],
+    "sourceDurationSeconds": 100.810756,
+    "sourceCropPixels": {
+      "x": 32,
+      "y": 1204,
+      "width": 2418,
+      "height": 210
+    },
+    "cursorHiddenOnExport": true
+  },
+  "visualReview": {
+    "coversAtFullResolution": [
+      "overview.png",
+      "menu-widget.png"
+    ],
+    "sourcePngCropsPixelIdentical": true,
+    "animationTweensReviewed": 10,
+    "encodedMp4FramesReviewed": [
+      0,
+      90,
+      209,
+      210,
+      449,
+      450,
+      599,
+      600,
+      660,
+      720,
+      839,
+      840,
+      1079
+    ],
+    "encodedGifFramesReviewed": [
+      0,
+      23,
+      24,
+      35,
+      47,
+      48,
+      71
+    ],
+    "cursorsFound": false,
+    "occlusionFound": false,
+    "blackTailFound": false,
+    "fullVideoBlackdetectIntervals": 0,
+    "allGifFramesOpaque": true,
+    "gifFrameCount": 72,
+    "gifDurationMilliseconds": 9010,
+    "sourceRangesWithinEof": true,
+    "assetPathsValid": true
+  },
+  "preferencesRestored": {
+    "appearance": "Dark",
+    "processSearch": "empty",
+    "samplingInterval": "1s (unchanged)",
+    "liveState": "unchanged",
+    "widgetVisibility": "unchanged"
+  },
+  "render": {
+    "main": {
+      "capture": "screenshot",
+      "gpu": "hardware Apple M1",
+      "workers": 2,
+      "wallSeconds": 66.7
+    },
+    "teaser": {
+      "capture": "screenshot",
+      "gpu": "hardware Apple M1",
+      "workers": 1,
+      "wallSeconds": 12.6
+    }
+  }
+}

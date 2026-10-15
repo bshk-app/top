@@ -1,0 +1,303 @@
+{
+  "schemaVersion": 1,
+  "appVersion": "0.1.0",
+  "captureDate": "2026-10-12",
+  "captureTimezone": "Europe/Helsinki",
+  "tutorial": {
+    "durationSeconds": 36,
+    "nativeFootageSeconds": 8,
+    "pngHoldSeconds": 28,
+    "fps": 30,
+    "audioStreams": 0
+  },
+  "gif": {
+    "durationMilliseconds": 9010,
+    "frames": 72,
+    "requestedFps": 8,
+    "opaque": true
+  },
+  "manifestExcludesSelf": true,
+  "files": [
+    {
+      "path": "README.md",
+      "sizeBytes": 2781,
+      "sha256": "e1573aa011c9af227f20e824f95cb439ae85469c49b64fd7ab9439fd9ed14fbe"
+    },
+    {
+      "path": "menu-widget.png",
+      "sizeBytes": 169567,
+      "sha256": "3790efde77608d1ab0edc35dd9b09cdd4dbd1eec1aa9059b58a3b2a348864b43",
+      "dimensions": [
+        1600,
+        960
+      ]
+    },
+    {
+      "path": "overview.png",
+      "sizeBytes": 202459,
+      "sha256": "ce18421dc7efef2dbd56a7c955db3b2c0f7e183692896ce857e3efe4f3de638c",
+      "dimensions": [
+        1600,
+        960
+      ]
+    },
+    {
+      "path": "preview-contact-sheet.png",
+      "sizeBytes": 501589,
+      "sha256": "a4735de4720f5742eb12fd85ed991febc87f2646cbd188905ec04dcdcd2c02a8",
+      "dimensions": [
+        1920,
+        1950
+      ]
+    },
+    {
+      "path": "qa-results.json",
+      "sizeBytes": 2442,
+      "sha256": "64a2142a71f13e3f79237c951727355cd7a97cb97b047559bbbe2063bedeb823"
+    },
+    {
+      "path": "release-verification.json",
+      "sizeBytes": 703,
+      "sha256": "ee15e00c8e08c0d76ff98466f0df81a89beb10d2efb67d4db2fae26ce4ef946b"
+    },
+    {
+      "path": "tutorial/ASSET-LICENSES.md",
+      "sizeBytes": 1062,
+      "sha256": "e2121e8cf9b24ffc883bb428d50b36a6e77baf4d9992e09561a595c85579c3ab"
+    },
+    {
+      "path": "tutorial/BRIEF.md",
+      "sizeBytes": 1208,
+      "sha256": "c0ed5e1fd6e74688cbcd8c8a315c38461c6ffbf897d8f8d9b10d215eb5b7c7d1"
+    },
+    {
+      "path": "tutorial/DESIGN.md",
+      "sizeBytes": 574,
+      "sha256": "332e4efed266a1cdf9e7219158c7cbe3bb08e9f0bc56191157c0823d409cf290"
+    },
+    {
+      "path": "tutorial/PRODUCTION.md",
+      "sizeBytes": 5898,
+      "sha256": "e3f019200e4735602cc60e4039de44cefca2d376cb6bd305598d2935cb90a552"
+    },
+    {
+      "path": "tutorial/STORYBOARD.md",
+      "sizeBytes": 1144,
+      "sha256": "6d2af4cb7c9536fcb15fb6a5079f953c16c677aa9b0718ef0e4b5c9d2b1d9ef9"
+    },
+    {
+      "path": "tutorial/assets/app-icon.png",
+      "sizeBytes": 943457,
+      "sha256": "578d32108ada8b9c585aa4ee79bbd6cfec87a41a3cd5165bfed02e2a08ca46bb",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "path": "tutorial/assets/dashboard-metrics.png",
+      "sizeBytes": 333055,
+      "sha256": "52a02a73300119674f93f87e93c40d5a9b4edbe9831dc293c127154f10377292",
+      "dimensions": [
+        2482,
+        1090
+      ]
+    },
+    {
+      "path": "tutorial/assets/fonts/OFL.txt",
+      "sizeBytes": 4380,
+      "sha256": "262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a"
+    },
+    {
+      "path": "tutorial/assets/fonts/inter-variable.woff2",
+      "sizeBytes": 27708,
+      "sha256": "779821c86789ed36b544d9b82ad74cfdfe0bfd50363b81be9b3e692ede83f16b"
+    },
+    {
+      "path": "tutorial/assets/gsap.min.js",
+      "sizeBytes": 72777,
+      "sha256": "19e3ad578c9c583ddf9bdca2ad87bb55c3d70b331058e28abacab898f799b2ee"
+    },
+    {
+      "path": "tutorial/assets/menu-bar.png",
+      "sizeBytes": 49183,
+      "sha256": "c1364b46a2de45b5a099b88798297bb925cf88a70daf854d03cb87ffc47485a5",
+      "dimensions": [
+        750,
+        58
+      ]
+    },
+    {
+      "path": "tutorial/assets/process-detail.mp4",
+      "sizeBytes": 319137,
+      "sha256": "a61b37dd8ae6a43b08a49a71e9bda982aaa84bbd95378ed1d4c0afbc1461de4f",
+      "media": {
+        "streams": [
+          {
+            "type": "video",
+            "codec": "h264"
+          }
+        ],
+        "width": 2420,
+        "height": 210,
+        "pix_fmt": "yuv420p",
+        "avg_frame_rate": "30/1",
+        "duration": "8.000000",
+        "nb_frames": "240",
+        "formatDuration": "8.000000"
+      }
+    },
+    {
+      "path": "tutorial/assets/process-search.png",
+      "sizeBytes": 52238,
+      "sha256": "9deedde5303bb0362008cf49a6d11b4f66fc901c62c721af30c96ef247d9272e",
+      "dimensions": [
+        2418,
+        300
+      ]
+    },
+    {
+      "path": "tutorial/assets/widget.png",
+      "sizeBytes": 27556,
+      "sha256": "fe7b8e3f9ad82ff4c847a7f3b8f8a756c77ed97509f3bd23acca0475afca5c79",
+      "dimensions": [
+        576,
+        444
+      ]
+    },
+    {
+      "path": "tutorial/composition-plan.json",
+      "sizeBytes": 1444,
+      "sha256": "8342d8f5714e47b638f2f31258ab58c550a1ccdf8e0a741cb91d7acfa99ff427"
+    },
+    {
+      "path": "tutorial/compositions/menu.html",
+      "sizeBytes": 3441,
+      "sha256": "1e4d56187a9c85c92f3e6a6f63fece8a8a2a2557808bdc26f8ff18b2db941329"
+    },
+    {
+      "path": "tutorial/compositions/metrics.html",
+      "sizeBytes": 3293,
+      "sha256": "a9cc26292547ba0611b5cdd61de427dc29010024a8072ab9cac2a1e2f83ffd37"
+    },
+    {
+      "path": "tutorial/compositions/result.html",
+      "sizeBytes": 3638,
+      "sha256": "b64fe3e570366a52c47be90265d829a56069dd20bd7d740432d224c7fdfc1aac"
+    },
+    {
+      "path": "tutorial/compositions/search.html",
+      "sizeBytes": 3467,
+      "sha256": "65bf3f768513ba2f705ee7f1825e327bee158b04cf7dde62b44b97d0171a26d4"
+    },
+    {
+      "path": "tutorial/compositions/widget.html",
+      "sizeBytes": 3524,
+      "sha256": "6e4a87536e44e42d45355827c7b8614704509524bbd95ea8c056ef9e678634f2"
+    },
+    {
+      "path": "tutorial/covers/menu-widget/hyperframes.json",
+      "sizeBytes": 85,
+      "sha256": "fc6de712b0bf7e18cadeac5ba16f69d7de96763d085656bcbe220e926e01cb28"
+    },
+    {
+      "path": "tutorial/covers/menu-widget/index.html",
+      "sizeBytes": 2424,
+      "sha256": "863e3f54bef4822e4fa702515c629fec994090c848633eba4b1b62435d681210"
+    },
+    {
+      "path": "tutorial/covers/overview/hyperframes.json",
+      "sizeBytes": 85,
+      "sha256": "fc6de712b0bf7e18cadeac5ba16f69d7de96763d085656bcbe220e926e01cb28"
+    },
+    {
+      "path": "tutorial/covers/overview/index.html",
+      "sizeBytes": 2021,
+      "sha256": "15c6d46347a48afd29ff72978dc7e4a91e370eede35f729a395235ef271d0480"
+    },
+    {
+      "path": "tutorial/hyperframes.json",
+      "sizeBytes": 115,
+      "sha256": "7ab2d53b530df6d02ce59d904ddcf7eeed3adce78593298d24cee7e0da4139f4"
+    },
+    {
+      "path": "tutorial/index.html",
+      "sizeBytes": 1794,
+      "sha256": "6125856c17552cb88c31fdf82f6c93ef73f3ce0d2d95956e6ff95639ce5b925e"
+    },
+    {
+      "path": "tutorial/package.json",
+      "sizeBytes": 389,
+      "sha256": "fb86794bcc32e4d44c2c06b309ac94d95a53cca7418f86c083b289e2c5f64a1d"
+    },
+    {
+      "path": "tutorial/source-manifest.json",
+      "sizeBytes": 4656,
+      "sha256": "7141c301a2ad665e5d6616101cc0279ccc6ca6e0bc8538f36198bd0f75c8e4ec"
+    },
+    {
+      "path": "tutorial/teaser/hyperframes.json",
+      "sizeBytes": 58,
+      "sha256": "d029c79afff62463908275c9497c124ecb8c13536efce06626e9ed61610f45a5"
+    },
+    {
+      "path": "tutorial/teaser/index.html",
+      "sizeBytes": 4066,
+      "sha256": "44b43f1a48b084f3a4e3a4a128171ecbfaff3901f324328289bb85eed9a62476"
+    },
+    {
+      "path": "tutorial-preview.gif",
+      "sizeBytes": 174692,
+      "sha256": "b3fe5707698b8ec7180cf11bde6481cbd04a0af7b98bf290af0c3a75bbef5cc2",
+      "media": {
+        "streams": [
+          {
+            "type": "video",
+            "codec": "gif"
+          }
+        ],
+        "width": 960,
+        "height": 540,
+        "pix_fmt": "bgra",
+        "avg_frame_rate": "25/3",
+        "duration": "9.010000",
+        "nb_frames": "72",
+        "formatDuration": "9.010000"
+      }
+    },
+    {
+      "path": "tutorial.mp4",
+      "sizeBytes": 935677,
+      "sha256": "b9fe0a88b0bbffe940f4c9fde0ab704121ec7923db37ae377f1d62d389cc1398",
+      "media": {
+        "streams": [
+          {
+            "type": "video",
+            "codec": "h264"
+          }
+        ],
+        "width": 1920,
+        "height": 1080,
+        "pix_fmt": "yuv420p",
+        "avg_frame_rate": "30/1",
+        "duration": "36.000000",
+        "nb_frames": "1080",
+        "formatDuration": "36.000000"
+      }
+    }
+  ],
+  "internalRelativeSymlinks": [
+    {
+      "path": "tutorial/covers/menu-widget/assets",
+      "target": "../../assets"
+    },
+    {
+      "path": "tutorial/covers/overview/assets",
+      "target": "../../assets"
+    },
+    {
+      "path": "tutorial/teaser/assets",
+      "target": "../assets"
+    }
+  ]
+}
