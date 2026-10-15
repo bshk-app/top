@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/bshk-app/top/compare/v0.1.0...v0.1.1) (2026-10-15)
+
+
+### Fixed
+
+* allow disabling all menu bar indicators ([12e612d](https://github.com/bshk-app/top/commit/12e612d695bd7670d7b4fcac1c88a899a9466e08))
+
 ## [0.1.0]
 
 ### Added
